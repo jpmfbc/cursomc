@@ -8,10 +8,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.joaopaulo.cursomc.domain.Categoria;
-import com.joaopaulo.cursomc.domain.Cliente;
 import com.joaopaulo.cursomc.dto.CategoriaDTO;
 import com.joaopaulo.cursomc.repositories.CategoriaRepository;
 import com.joaopaulo.cursomc.services.exception.DataIntegrityException;
@@ -34,19 +34,19 @@ public class CategoriaService {
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 		"Objeto não encontrado! Id: " + id + ", Tipo: " + Categoria.class.getName()));
 	}
-	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public Categoria insert(Categoria c) {
 		c.setId(null);
 		return  repo.save(c);
 		
 	}
-
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public Categoria update(Categoria obj) {
 		Categoria newObj = find(obj.getId());
 		updateData(newObj,obj);
 		return repo.save(newObj);
 	}
-	
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public void delete(Integer id) {
 		find(id);
 		try {

@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.joaopaulo.cursomc.domain.Cidade;
 import com.joaopaulo.cursomc.domain.Cliente;
 import com.joaopaulo.cursomc.domain.Endereco;
+import com.joaopaulo.cursomc.domain.enums.Perfil;
 import com.joaopaulo.cursomc.domain.enums.TipoCliente;
 import com.joaopaulo.cursomc.dto.ClienteDTO;
 import com.joaopaulo.cursomc.dto.ClienteNewDto;
 import com.joaopaulo.cursomc.repositories.ClienteRepository;
 import com.joaopaulo.cursomc.repositories.EnderecoRepository;
+import com.joaopaulo.cursomc.security.UserSS;
+import com.joaopaulo.cursomc.services.exception.AuthorizationException;
 import com.joaopaulo.cursomc.services.exception.DataIntegrityException;
 import com.joaopaulo.cursomc.services.exception.ObjectNotFoundException;
 
@@ -35,11 +39,17 @@ public class ClienteService {
 	@Autowired
 	private EnderecoRepository enderecoRepository;
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public List<Cliente> findAll() {
 		return repo.findAll();
 	}
 
 	public Cliente find(Integer id) {
+		UserSS user = UserService.authenticated();
+		if(user == null || user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new  AuthorizationException("Acesso negado");
+		}
+		
 		Optional<Cliente> obj = repo.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
@@ -59,6 +69,7 @@ public class ClienteService {
 		return repo.save(newObj);
 	}
 
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public void delete(Integer id) {
 		find(id);
 		try {
@@ -67,7 +78,7 @@ public class ClienteService {
 			throw new DataIntegrityException("Não é possivel excluir porque há pedidos relacionados");
 		}
 	}
-
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repo.findAll(pageRequest);
