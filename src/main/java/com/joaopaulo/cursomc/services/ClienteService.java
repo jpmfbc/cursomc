@@ -1,5 +1,6 @@
 package com.joaopaulo.cursomc.services;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.joaopaulo.cursomc.domain.Cidade;
 import com.joaopaulo.cursomc.domain.Cliente;
@@ -39,6 +41,9 @@ public class ClienteService {
 	@Autowired
 	private EnderecoRepository enderecoRepository;
 
+	@Autowired
+	private S3Service s3Service;
+	
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public List<Cliente> findAll() {
 		return repo.findAll();
@@ -109,6 +114,10 @@ public class ClienteService {
 	private void updateData(Cliente newObj, Cliente obj) {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
+	}
+	
+	public URI uploadProfilePicture(MultipartFile multipartFile) {
+		return s3Service.upaloadFile(multipartFile);
 	}
 
 }
