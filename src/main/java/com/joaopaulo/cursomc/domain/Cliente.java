@@ -23,59 +23,60 @@ import com.joaopaulo.cursomc.domain.enums.Perfil;
 import com.joaopaulo.cursomc.domain.enums.TipoCliente;
 
 @Entity
-public class Cliente implements Serializable{
+public class Cliente implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String nome;
-	
-	@Column(unique=true)
+
+	@Column(unique = true)
 	private String email;
 	private String cpfOuCnpj;
 	private Integer tipo;
-	
-	@JsonIgnore
-	private String senha;
-	
 
 	@JsonIgnore
-	@OneToMany(mappedBy="cliente")
+	private String senha;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "cliente")
 	private List<Pedido> pedidos = new ArrayList<>();
-		
-	@OneToMany(mappedBy = "cliente", cascade=CascadeType.ALL)
+
+	@OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
 	private List<Endereco> enderecos = new ArrayList<>();
-	
-	/*Set é para conjuntos, a diferença dele para uma lista é que ele ja não
-	permite valores repetidos.*/
-	
-	/*ElementCollection -> para criar entidades fracas apartir de uma lista.
-	 *CollectionTable -> para definir nome da tabela que vai representar a entidade fraca.
-	 * */
-	
+
+	/*
+	 * Set é para conjuntos, a diferença dele para uma lista é que ele ja não
+	 * permite valores repetidos.
+	 */
+
+	/*
+	 * ElementCollection -> para criar entidades fracas apartir de uma lista.
+	 * CollectionTable -> para definir nome da tabela que vai representar a entidade
+	 * fraca.
+	 */
+
 	@ElementCollection
 	@CollectionTable(name = "TELEFONE")
 	private Set<String> telefones = new HashSet<>();
-	
-	@ElementCollection(fetch= FetchType.EAGER)
+
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "PERFIl")
 	private Set<Integer> perfis = new HashSet<>();
-	
-	private String imageUrl;
-	
+
 	public Cliente() {
 		addPerfis(Perfil.CLIENTE);
 	}
 
-	public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipo,String senha) {
+	public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipo, String senha) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
 		this.cpfOuCnpj = cpfOuCnpj;
-		this.tipo = (tipo == null) ? null: tipo.getCod();
+		this.tipo = (tipo == null) ? null : tipo.getCod();
 		this.senha = senha;
 		addPerfis(Perfil.CLIENTE);
 	}
@@ -128,7 +129,6 @@ public class Cliente implements Serializable{
 		this.senha = senha;
 	}
 
-	
 	public List<Endereco> getEnderecos() {
 		return enderecos;
 	}
@@ -144,11 +144,11 @@ public class Cliente implements Serializable{
 	public void setTelefones(Set<String> telefones) {
 		this.telefones = telefones;
 	}
-	
+
 	public Set<Perfil> getPerfis() {
 		return this.perfis.stream().map(x -> Perfil.toEnum(x)).collect(Collectors.toSet());
-	} 
-	
+	}
+
 	public void addPerfis(Perfil perfil) {
 		perfis.add(perfil.getCod());
 	}
@@ -160,8 +160,7 @@ public class Cliente implements Serializable{
 	public void setPedidos(List<Pedido> pedidos) {
 		this.pedidos = pedidos;
 	}
-	
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -187,14 +186,4 @@ public class Cliente implements Serializable{
 		return true;
 	}
 
-	public String getImageUrl() {
-		return imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
-	
-	
-	
 }
