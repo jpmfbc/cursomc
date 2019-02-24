@@ -23,17 +23,17 @@ import com.joaopaulo.cursomc.services.PedidoService;
 public class PedidoResource {
 	
 	@Autowired
-	private PedidoService service;
+	private PedidoService pedidoService;
 	@RequestMapping(value = "/{id}",method=RequestMethod.GET)
 	public ResponseEntity<Pedido> listar(@PathVariable Integer id) {
-		Pedido pedido = service.find(id);
+		Pedido pedido = pedidoService.find(id);
 		return ResponseEntity.ok().body(pedido);
 	}
 	
 	
 	@RequestMapping(method=RequestMethod.POST)
 	public ResponseEntity<Void> insert (@Valid @RequestBody Pedido obj){
-		      obj =  service.insert(obj);
+		      obj =  pedidoService.insert(obj);
 		      URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 		    		  .path("/{id}").buildAndExpand(obj.getId()).toUri();
 		      return ResponseEntity.created(uri).build();
@@ -45,7 +45,7 @@ public class PedidoResource {
 			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "instante") String orderBy, 
 			@RequestParam(value = "direction", defaultValue = "DESC") String direction){
-		Page<Pedido> list = service.findPage(page, linesPerPage, orderBy, direction);
+		Page<Pedido> list = pedidoService.findPage(page, linesPerPage, orderBy, direction);
 		return ResponseEntity.ok().body(list);
 	}
 }

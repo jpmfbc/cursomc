@@ -25,7 +25,7 @@ import com.joaopaulo.cursomc.services.exception.ObjectNotFoundException;
 @Service
 public class PedidoService {
 	@Autowired
-	private PedidoRepository repo; 
+	private PedidoRepository pedidoRepository; 
 	
 	@Autowired
 	private BoletoService boletoService; 
@@ -46,7 +46,7 @@ public class PedidoService {
 	private EmailService emailService;
 	
 	public Pedido find(Integer id) {
-		Optional<Pedido> obj = repo.findById(id);
+		Optional<Pedido> obj = pedidoRepository.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 		"Objeto não encontrado! Id: " + id + ", Tipo: " + Pedido.class.getName()));
 	}
@@ -62,7 +62,7 @@ public class PedidoService {
 			PagamentoComBoleto pagto = (PagamentoComBoleto) obj.getPagamento();
 			boletoService.preencherPagamentoComBoleto(pagto, obj.getInstante());
 		}
-		obj = repo.save(obj);
+		obj = pedidoRepository.save(obj);
 		pagamentoRepository.save(obj.getPagamento());
 		for (ItemPedido ip : obj.getItens()) {
 			ip.setDesconto(0.0);
@@ -82,6 +82,6 @@ public class PedidoService {
 		}
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		Cliente cliente = clienteService.find(user.getId());
-		return repo.findByCliente(cliente,pageRequest);
+		return pedidoRepository.findByCliente(cliente,pageRequest);
 	}
 }

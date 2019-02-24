@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.joaopaulo.cursomc.domain.Cliente;
 import com.joaopaulo.cursomc.domain.enums.TipoCliente;
-import com.joaopaulo.cursomc.dto.ClienteNewDto;
+import com.joaopaulo.cursomc.dto.ClienteNewDTO;
 import com.joaopaulo.cursomc.repositories.ClienteRepository;
 import com.joaopaulo.cursomc.resources.exception.FieldMessage;
 import com.joaopaulo.cursomc.services.validation.Utils.BR;
 
-public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDto> {
+public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDTO> {
 	
 	@Autowired
 	ClienteRepository repo;
@@ -25,7 +25,7 @@ public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert
 	}
 
 	@Override
-	public boolean isValid(ClienteNewDto objDto, ConstraintValidatorContext context) {
+	public boolean isValid(ClienteNewDTO objDto, ConstraintValidatorContext context) {
 		List<FieldMessage> list = new ArrayList<>();
 		
 		if(objDto.getTipo().equals(TipoCliente.PESSOAFISICA.getCod()) && !BR.isValidCpf(objDto.getCpfOuCnpj())) {

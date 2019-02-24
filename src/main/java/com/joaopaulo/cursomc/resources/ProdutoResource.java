@@ -22,10 +22,10 @@ import com.joaopaulo.cursomc.services.ProdutoService;
 public class ProdutoResource {
 	
 	@Autowired
-	private ProdutoService service;
+	private ProdutoService produtoService;
 	@RequestMapping(value = "/{id}",method=RequestMethod.GET)
 	public ResponseEntity<Produto> listar(@PathVariable Integer id) {
-		Produto pedido = service.find(id);
+		Produto pedido = produtoService.find(id);
 		return ResponseEntity.ok().body(pedido);
 	}
 	
@@ -39,7 +39,7 @@ public class ProdutoResource {
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction){
 		List<Integer> ids = URL.decodeIntList(categorias);
 		String nomeDecode = URL.decodeParam(nome);
-		Page<Produto> list = service.search(nomeDecode, ids, page, linesPerPage, orderBy, direction);
+		Page<Produto> list = produtoService.search(nomeDecode, ids, page, linesPerPage, orderBy, direction);
 		Page<ProdutoDTO> listDTO = list.map(obj -> new ProdutoDTO(obj));
 		return ResponseEntity.ok().body(listDTO);
 	}

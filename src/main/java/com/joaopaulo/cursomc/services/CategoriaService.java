@@ -21,36 +21,36 @@ import com.joaopaulo.cursomc.services.exception.ObjectNotFoundException;
 public class CategoriaService {
 
 	@Autowired
-	private CategoriaRepository repo;
+	private CategoriaRepository categoriaRepository;
 	
 	
 	public List<Categoria> findAll() {
-		return repo.findAll();		
+		return categoriaRepository.findAll();		
 	}
 	
 	
 	public Categoria find(Integer id) {
-		Optional<Categoria> obj = repo.findById(id);
+		Optional<Categoria> obj = categoriaRepository.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 		"Objeto não encontrado! Id: " + id + ", Tipo: " + Categoria.class.getName()));
 	}
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public Categoria insert(Categoria c) {
 		c.setId(null);
-		return  repo.save(c);
+		return  categoriaRepository.save(c);
 		
 	}
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public Categoria update(Categoria obj) {
 		Categoria newObj = find(obj.getId());
 		updateData(newObj,obj);
-		return repo.save(newObj);
+		return categoriaRepository.save(newObj);
 	}
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public void delete(Integer id) {
 		find(id);
 		try {
-			repo.deleteById(id);
+			categoriaRepository.deleteById(id);
 		}
 		catch(DataIntegrityViolationException e) {
 			throw  new DataIntegrityException("Não é possivel excluir uma categoria que possui produtos.");
@@ -59,7 +59,7 @@ public class CategoriaService {
 	
 	public Page<Categoria> findPage(Integer page, Integer linesPerPage,String orderBy, String direction){
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-		return repo.findAll(pageRequest);
+		return categoriaRepository.findAll(pageRequest);
 	}
 	
 	public Categoria fromDTO(CategoriaDTO objDto) {

@@ -18,13 +18,13 @@ import com.joaopaulo.cursomc.services.exception.ObjectNotFoundException;
 @Service
 public class ProdutoService {
 	@Autowired
-	private ProdutoRepository repo; 
+	private ProdutoRepository produtoRepository; 
 	
 	@Autowired
 	private CategoriaRepository categoriaRepository;
 	
 	public Produto find(Integer id) {
-		Optional<Produto> obj = repo.findById(id);
+		Optional<Produto> obj = produtoRepository.findById(id);
 		return obj.orElseThrow(() -> new ObjectNotFoundException(
 		"Objeto não encontrado! Id: " + id + ", Tipo: " + Produto.class.getName()));
 	}
@@ -32,7 +32,7 @@ public class ProdutoService {
 	public Page<Produto> search(String nome, List<Integer> ids,Integer page, Integer linesPerPage,String orderBy, String direction){
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		List<Categoria> categorias = categoriaRepository.findAllById(ids);
-		return repo.findDistinctByNomeContainingAndCategoriasIn(nome,categorias,pageRequest);
+		return produtoRepository.findDistinctByNomeContainingAndCategoriasIn(nome,categorias,pageRequest);
 		
 	}
 }

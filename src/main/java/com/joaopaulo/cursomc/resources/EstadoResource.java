@@ -22,14 +22,14 @@ import com.joaopaulo.cursomc.services.EstadoService;
 public class EstadoResource {
 	
 	@Autowired
-	private EstadoService service;
+	private EstadoService estadoService;
 
 	@Autowired
 	private CidadeService cidadeService;
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public ResponseEntity<List<EstadoDTO>> findAll(){
-		List<Estado> list = service.findAllByOrderByNome();
+		List<Estado> list = estadoService.findAllByOrderByNome();
 		List<EstadoDTO> listDTO = list.stream().map(obj -> new EstadoDTO(obj)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listDTO);
 	}

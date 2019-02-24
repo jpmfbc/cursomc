@@ -26,11 +26,11 @@ import com.joaopaulo.cursomc.services.CategoriaService;
 public class CategoriaResource {
 	
 	@Autowired
-	private CategoriaService service;
+	private CategoriaService categoriaService;
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public ResponseEntity<List<CategoriaDTO>> findAll(){
-		List<Categoria> list = service.findAll();
+		List<Categoria> list = categoriaService.findAll();
 		/*obj -> Arrow function(função anonima), esta criando uma função onde os objetos que estão
 		 * na lista convertida para stream, vão ser passador como parametro no contrutor da classe CategoriaDTO
 		 * e o resultado desta ação vai subistituir os objetos da lista. */
@@ -42,15 +42,15 @@ public class CategoriaResource {
 	@RequestMapping(value="/{id}",method=RequestMethod.GET)
 	public ResponseEntity<Categoria> find(@PathVariable Integer id) {
 		
-		Categoria obj = service.find(id);
+		Categoria obj = categoriaService.find(id);
 		
 		return ResponseEntity.ok().body(obj);
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
 	public ResponseEntity<Void> insert (@Valid @RequestBody CategoriaDTO objDto){
-			 Categoria obj =  service.fromDTO(objDto);
-		      obj =  service.insert(obj);
+			 Categoria obj =  categoriaService.fromDTO(objDto);
+		      obj =  categoriaService.insert(obj);
 		      URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 		    		  .path("/{id}").buildAndExpand(obj.getId()).toUri();
 		      return ResponseEntity.created(uri).build();
@@ -58,15 +58,15 @@ public class CategoriaResource {
 	
 	@RequestMapping(value = "/{id}",method=RequestMethod.PUT)
 	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDto, @PathVariable Integer id){
-		Categoria obj = service.fromDTO(objDto);
+		Categoria obj = categoriaService.fromDTO(objDto);
 		obj.setId(id);
-		obj  = service.update(obj);
+		obj  = categoriaService.update(obj);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Integer id){
-		service.delete(id);
+		categoriaService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
@@ -76,7 +76,7 @@ public class CategoriaResource {
 			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy, 
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction){
-		Page<Categoria> list = service.findPage(page, linesPerPage, orderBy, direction);
+		Page<Categoria> list = categoriaService.findPage(page, linesPerPage, orderBy, direction);
 		Page<CategoriaDTO> listDTO = list.map(obj -> new CategoriaDTO(obj));
 		return ResponseEntity.ok().body(listDTO);
 	}

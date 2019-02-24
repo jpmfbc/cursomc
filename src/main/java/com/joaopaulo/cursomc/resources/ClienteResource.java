@@ -20,7 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.joaopaulo.cursomc.domain.Cliente;
 import com.joaopaulo.cursomc.dto.ClienteDTO;
-import com.joaopaulo.cursomc.dto.ClienteNewDto;
+import com.joaopaulo.cursomc.dto.ClienteNewDTO;
 import com.joaopaulo.cursomc.services.ClienteService;
 
 @RestController
@@ -28,25 +28,25 @@ import com.joaopaulo.cursomc.services.ClienteService;
 public class ClienteResource {
 
 	@Autowired
-	private ClienteService service;
+	private ClienteService clienteService;
 	
 	@RequestMapping(value="/{id}",method=RequestMethod.GET)
 	public ResponseEntity<Cliente> find(@PathVariable Integer id) {
 		
-		Cliente obj = service.find(id);
+		Cliente obj = clienteService.find(id);
 		
 		return ResponseEntity.ok().body(obj);
 	}
 	
 	@RequestMapping(value="/email", method=RequestMethod.GET)
 	public ResponseEntity<Cliente> find(@RequestParam(value="value") String email) {
-		Cliente obj = service.findByEmail(email);
+		Cliente obj = clienteService.findByEmail(email);
 		return ResponseEntity.ok().body(obj);
 	}
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public ResponseEntity<List<ClienteDTO>> findAll(){
-		List<Cliente> list = service.findAll();
+		List<Cliente> list = clienteService.findAll();
 		/*obj -> Arrow function(função anonima), esta criando uma função onde os objetos que estão
 		 * na lista convertida para stream, vão ser passador como parametro no contrutor da classe ClienteDTO
 		 * e o resultado desta ação vai subistituir os objetos da lista. */
@@ -56,9 +56,9 @@ public class ClienteResource {
 	
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public ResponseEntity<Void> insert (@Valid @RequestBody ClienteNewDto objDto){
-			  Cliente obj =  service.fromDTO(objDto);
-		      obj =  service.insert(obj);
+	public ResponseEntity<Void> insert (@Valid @RequestBody ClienteNewDTO objDto){
+			  Cliente obj =  clienteService.fromDTO(objDto);
+		      obj =  clienteService.insert(obj);
 		      URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 		    		  .path("/{id}").buildAndExpand(obj.getId()).toUri();
 		      return ResponseEntity.created(uri).build();
@@ -66,15 +66,15 @@ public class ClienteResource {
 	
 	@RequestMapping(value = "/{id}",method=RequestMethod.PUT)
 	public ResponseEntity<Void> update(@Valid @RequestBody ClienteDTO objDto, @PathVariable Integer id){
-		Cliente obj = service.fromDTO(objDto);
+		Cliente obj = clienteService.fromDTO(objDto);
 		obj.setId(id);
-		obj  = service.update(obj);
+		obj  = clienteService.update(obj);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@RequestMapping(value = "/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Integer id){
-		service.delete(id);
+		clienteService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
@@ -84,14 +84,14 @@ public class ClienteResource {
 			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
 			@RequestParam(value = "orderBy", defaultValue = "nome") String orderBy, 
 			@RequestParam(value = "direction", defaultValue = "ASC") String direction){
-		Page<Cliente> list = service.findPage(page, linesPerPage, orderBy, direction);
+		Page<Cliente> list = clienteService.findPage(page, linesPerPage, orderBy, direction);
 		Page<ClienteDTO> listDTO = list.map(obj -> new ClienteDTO(obj));
 		return ResponseEntity.ok().body(listDTO);
 	}
 	
 	@RequestMapping(value="/picture", method=RequestMethod.POST)
 	public ResponseEntity<Void> uploadProfilePicture(@RequestParam(name="file") MultipartFile file) {
-		URI uri = service.uploadProfilePicture(file);
+		URI uri = clienteService.uploadProfilePicture(file);
 		return ResponseEntity.created(uri).build();
 	}
 }

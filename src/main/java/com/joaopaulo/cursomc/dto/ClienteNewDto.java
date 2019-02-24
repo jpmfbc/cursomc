@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.Length;
 import com.joaopaulo.cursomc.services.validation.ClienteInsert;
 
 @ClienteInsert
-public class ClienteNewDto implements Serializable{
+public class ClienteNewDTO implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 
@@ -46,7 +46,7 @@ public class ClienteNewDto implements Serializable{
 	private String telefone3;
 	private Integer cidadeId;
 	
-	public ClienteNewDto() {
+	public ClienteNewDTO() {
 		
 	}
 
